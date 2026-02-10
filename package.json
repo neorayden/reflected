@@ -1,0 +1,16 @@
+{
+  "name": "reflected",
+  "version": "1.0.0",
+  "description": "One-question psychological insight tool — Batman or Superman",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "openai": "^4.73.0"
+  }
+}

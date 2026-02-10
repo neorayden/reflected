@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0d0d0c" />
+  <title>Reflected</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0d0d0c;
+      --surface: #161614;
+      --surface-elevated: #1c1c1a;
+      --border: #2a2a28;
+      --text: #e8e6e3;
+      --text-muted: #8c8a87;
+      --accent: #c4a574;
+      --accent-soft: rgba(196, 165, 116, 0.15);
+      --error: #b85450;
+      --radius: 8px;
+      --radius-lg: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "DM Sans", system-ui, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+    }
+
+    .app {
+      width: 100%;
+      max-width: 44rem;
+      margin: 0 auto;
+      padding: 1.25rem 1rem 3rem;
+      padding-top: max(1.25rem, env(safe-area-inset-top));
+      padding-bottom: max(3rem, env(safe-area-inset-bottom));
+    }
+
+    @media (min-width: 480px) {
+      .app {
+        padding: 2rem 1.25rem 4rem;
+      }
+    }
+
+    @media (min-width: 768px) {
+      .app {
+        padding: 3rem 1.5rem 4rem;
+      }
+    }
+
+    h1 {
+      font-family: "Cormorant Garamond", serif;
+      font-weight: 600;
+      font-size: 1.1rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin: 0 0 2rem;
+    }
+
+    @media (min-width: 480px) {
+      h1 { font-size: 1.25rem; margin-bottom: 2.5rem; }
+    }
+
+    @media (min-width: 768px) {
+      h1 { margin-bottom: 3rem; }
+    }
+
+    .question {
+      font-family: "Cormorant Garamond", serif;
+      font-size: 1.5rem;
+      font-weight: 400;
+      line-height: 1.35;
+      margin-bottom: 1.25rem;
+      color: var(--text);
+    }
+
+    @media (min-width: 480px) {
+      .question { font-size: 1.65rem; margin-bottom: 1.5rem; }
+    }
+
+    @media (min-width: 768px) {
+      .question { font-size: 1.75rem; }
+    }
+
+    .question em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    form {
+      margin-bottom: 1.75rem;
+    }
+
+    .field-wrap {
+      position: relative;
+      display: block;
+      width: 100%;
+    }
+
+    /* Keep all typed content inside the textarea only; prevent browser quirks */
+    textarea {
+      display: block;
+      width: 100%;
+      min-width: 0;
+      min-height: 120px;
+      padding: 1rem 1rem 1.25rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 16px;
+      line-height: 1.6;
+      resize: vertical;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+      appearance: none;
+      position: relative;
+    }
+
+    @media (min-width: 480px) {
+      textarea {
+        min-height: 140px;
+        padding: 1rem 1.25rem;
+        font-size: 0.95rem;
+      }
+    }
+
+    textarea::placeholder {
+      color: var(--text-muted);
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    /* Prevent any pseudo-content from showing user input elsewhere */
+    textarea::-ms-clear,
+    textarea::-ms-reveal {
+      display: none;
+    }
+
+    .submit-wrap {
+      margin-top: 1rem;
+    }
+
+    button[type="submit"] {
+      display: block;
+      width: 100%;
+      padding: 0.875rem 1.25rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    @media (min-width: 480px) {
+      button[type="submit"] {
+        width: auto;
+        padding: 0.75rem 1.75rem;
+        font-size: 0.9rem;
+      }
+    }
+
+    button[type="submit"]:hover:not(:disabled) {
+      border-color: var(--accent);
+      background: var(--surface-elevated);
+    }
+
+    button[type="submit"]:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .error {
+      margin-top: 1rem;
+      padding: 0.75rem 1rem;
+      background: rgba(184, 84, 80, 0.12);
+      border: 1px solid var(--error);
+      border-radius: var(--radius);
+      color: #e8a29f;
+      font-size: 0.9rem;
+    }
+
+    .report {
+      margin-top: 2rem;
+      padding: 0;
+    }
+
+    @media (min-width: 768px) {
+      .report { margin-top: 2.5rem; }
+    }
+
+    .report-header {
+      font-family: "Cormorant Garamond", serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    @media (min-width: 480px) {
+      .report-header { font-size: 1rem; margin-bottom: 1.25rem; }
+    }
+
+    .report-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .report-content {
+      font-family: "Cormorant Garamond", serif;
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      padding: 1.25rem 1rem;
+      unicode-bidi: plaintext;
+    }
+
+    @media (min-width: 480px) {
+      .report-content {
+        font-size: 1.05rem;
+        padding: 1.5rem 1.25rem;
+      }
+    }
+
+    @media (min-width: 768px) {
+      .report-content {
+        font-size: 1.1rem;
+        padding: 1.75rem 1.5rem;
+      }
+    }
+
+    .report-content :first-child {
+      margin-top: 0;
+    }
+
+    .report-content p {
+      margin: 0 0 1.25rem;
+    }
+
+    .report-content p:last-child {
+      margin-bottom: 0;
+    }
+
+    .report-content .section-block {
+      margin-bottom: 1.25rem;
+      padding: 1rem 1rem 1.25rem;
+      background: var(--surface-elevated);
+      border-radius: var(--radius);
+      border-left: 3px solid var(--accent);
+    }
+
+    @media (min-width: 480px) {
+      .report-content .section-block {
+        margin-bottom: 1.75rem;
+        padding: 1.25rem 1.25rem 1.5rem;
+      }
+    }
+
+    .report-content .section-block:last-child {
+      margin-bottom: 0;
+    }
+
+    .report-content .section-title {
+      font-weight: 600;
+      font-size: 1.05em;
+      color: var(--accent);
+      margin: 0 0 0.6rem;
+      display: block;
+    }
+
+    .report-content .section-body {
+      margin: 0;
+      color: var(--text);
+      font-weight: 400;
+    }
+
+    .report-content .section-body p {
+      margin: 0 0 0.5rem;
+    }
+
+    .report-content .section-body p:last-child {
+      margin-bottom: 0;
+    }
+
+    .report-content ul {
+      margin: 0.5rem 0 0;
+      padding-left: 1.35rem;
+    }
+
+    .report-content li {
+      margin-bottom: 0.4rem;
+    }
+
+    .report-content .signature {
+      margin-top: 1.5rem;
+      padding: 1.35rem 1.5rem;
+      background: var(--accent-soft);
+      border-radius: var(--radius);
+      border: 1px solid rgba(196, 165, 116, 0.35);
+    }
+
+    .report-content .signature .section-title {
+      font-style: italic;
+      color: var(--text);
+    }
+
+    .report-content .signature .section-body {
+      font-size: 1.05em;
+      font-style: italic;
+      color: var(--text);
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .loading {
+      margin-top: 1.75rem;
+      padding-top: 1.75rem;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    @media (min-width: 768px) {
+      .loading { margin-top: 2rem; padding-top: 2rem; }
+    }
+
+    .loading::after {
+      content: "";
+      display: inline-block;
+      width: 1em;
+      height: 1em;
+      margin-left: 0.35rem;
+      vertical-align: middle;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>Reflected</h1>
+    <p class="question">Batman or Superman — and why?</p>
+
+    <form id="form" novalidate>
+      <div class="field-wrap">
+        <label for="answer" class="visually-hidden">Your answer</label>
+        <textarea
+          id="answer"
+          name="answer"
+          placeholder="Answer in a few sentences. Your explanation is what we reflect on — not right or wrong."
+          required
+          autocomplete="off"
+          autocorrect="on"
+          autocapitalize="sentences"
+        ></textarea>
+      </div>
+      <div class="submit-wrap">
+        <button type="submit" id="submit">See your reflection</button>
+      </div>
+      <div id="form-error" class="error" role="alert" hidden></div>
+    </form>
+
+    <div id="loading" class="loading" hidden>Reflecting on your answer</div>
+    <div id="report" class="report" hidden>
+      <div class="report-header">Your reflection</div>
+      <div class="report-card">
+        <div id="report-content" class="report-content"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("form");
+    const answerEl = document.getElementById("answer");
+    const submitBtn = document.getElementById("submit");
+    const formError = document.getElementById("form-error");
+    const loading = document.getElementById("loading");
+    const report = document.getElementById("report");
+    const reportContent = document.getElementById("report-content");
+
+    function showError(msg) {
+      formError.textContent = msg;
+      formError.hidden = false;
+    }
+
+    function hideError() {
+      formError.hidden = true;
+    }
+
+    function renderReport(text) {
+      const lines = text.split("\n");
+      const sections = [];
+      let currentSection = null;
+      let currentBody = [];
+      let listItems = [];
+
+      function flushList() {
+        if (listItems.length) {
+          currentBody.push("<ul>" + listItems.map((li) => "<li>" + escapeHtml(li) + "</li>").join("") + "</ul>");
+          listItems = [];
+        }
+      }
+
+      function closeSection(isSignature) {
+        if (!currentSection) return;
+        flushList();
+        const bodyHtml = currentBody.join("");
+        const title = escapeHtml(currentSection.title);
+        const cls = isSignature ? "section-block signature" : "section-block";
+        sections.push('<div class="' + cls + '"><span class="section-title">' + title + '</span><div class="section-body">' + bodyHtml + '</div></div>');
+        currentSection = null;
+        currentBody = [];
+      }
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        const trimmed = line.trim();
+        const numberedHeading = trimmed.match(/^(\d+)\.\s+(.+)$/);
+        const isBullet = /^[-*•]\s+/.test(trimmed);
+
+        if (trimmed === "") {
+          flushList();
+          continue;
+        }
+
+        if (numberedHeading) {
+          const num = parseInt(numberedHeading[1], 10);
+          const title = numberedHeading[2].trim();
+          const isSignature = num === 7 || /signature\s+insight/i.test(title);
+
+          if (currentSection && (currentSection.title || currentBody.length)) closeSection(currentSection.isSignature);
+          currentSection = { title, isSignature };
+          currentBody = [];
+          continue;
+        }
+
+        if (!currentSection && trimmed.length < 80 && /^[A-Z]/.test(trimmed)) {
+          if (currentSection && (currentSection.title || currentBody.length)) closeSection(currentSection.isSignature);
+          currentSection = { title: trimmed, isSignature: /signature\s+insight/i.test(trimmed) };
+          currentBody = [];
+          continue;
+        }
+
+        if (currentSection && isBullet) {
+          flushList();
+          listItems.push(trimmed.replace(/^[-*•]\s+/, ""));
+          continue;
+        }
+
+        if (currentSection) {
+          flushList();
+          currentBody.push("<p>" + escapeHtml(trimmed) + "</p>");
+        } else {
+          flushList();
+          if (sections.length === 0) {
+            currentSection = { title: "Insight", isSignature: false };
+            currentBody = ["<p>" + escapeHtml(trimmed) + "</p>"];
+          } else {
+            sections.push("<p>" + escapeHtml(trimmed) + "</p>");
+          }
+        }
+      }
+
+      if (currentSection && (currentSection.title || currentBody.length)) closeSection(currentSection.isSignature);
+
+      reportContent.innerHTML = sections.join("");
+    }
+
+    function escapeHtml(s) {
+      const div = document.createElement("div");
+      div.textContent = s;
+      return div.innerHTML;
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      hideError();
+      const raw = answerEl.value.trim();
+      if (raw.length < 10) {
+        showError("Please write at least a few sentences so we can reflect your response meaningfully.");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      report.hidden = true;
+      loading.hidden = false;
+
+      try {
+        const res = await fetch("/api/insight", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ answer: raw }),
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          showError(data.error || "Something went wrong.");
+          return;
+        }
+
+        reportContent.innerHTML = "";
+        renderReport(data.report);
+        report.hidden = false;
+        report.scrollIntoView({ behavior: "smooth", block: "start" });
+      } catch (err) {
+        showError("Could not reach the server. Please try again.");
+      } finally {
+        loading.hidden = true;
+        submitBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
