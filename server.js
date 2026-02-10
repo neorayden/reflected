@@ -6,9 +6,13 @@ import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-// Load .env then .env.local (local overrides) so GROQ/HF keys in .env.local are used
+// Load .env then .env.local (local overrides). On Vercel, env vars come from the dashboard only.
 dotenv.config();
-dotenv.config({ path: join(__dirname, ".env.local"), override: true });
+try {
+  dotenv.config({ path: join(__dirname, ".env.local"), override: true });
+} catch {
+  // .env.local optional (e.g. not present on Vercel)
+}
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -77,7 +81,21 @@ app.post("/api/insight", async (req, res) => {
   const groqKey = (process.env.GROQ_API_KEY || "").trim();
   const hfKey = (process.env.HUGGINGFACE_API_KEY || "").trim();
   if (!groqKey && !hfKey) {
-    return res.status(500).json({ error: "Server is not configured for AI. Please set GROQ_API_KEY or HUGGINGFACE_API_KEY." });
+    const onVercel = !!process.env.VERCEL;
+    console.warn(
+      "[Reflected] Missing API keys. GROQ_API_KEY set:",
+      !!groqKey,
+      "HUGGINGFACE_API_KEY set:",
+      !!hfKey,
+      onVercel ? "(Vercel: add both in Project → Settings → Environment Variables, then redeploy)" : ""
+    );
+    return res.status(500).json({
+      error:
+        "Server is not configured for AI. Please set GROQ_API_KEY or HUGGINGFACE_API_KEY." +
+        (onVercel
+          ? " In Vercel: Project → Settings → Environment Variables — add them for Production (and Preview), then redeploy."
+          : ""),
+    });
   }
 
   const userMessage = `The user was asked: "Batman or Superman — and why?"\n\nTheir answer:\n\n${trimmed}`;
